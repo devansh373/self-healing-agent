@@ -1,0 +1,78 @@
+# ──────────────────────────────────────────────
+# Python
+# ──────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+dist/
+build/
+*.whl
+.venv/
+venv/
+env/
+
+# ──────────────────────────────────────────────
+# Environment / Secrets (Strict wildcard protection)
+# ──────────────────────────────────────────────
+.env
+.env.*
+**/.env
+**/.env.*
+!.env.example
+!**/.env.example
+!.env.local.example
+!**/.env.local.example
+*.pem
+*.key
+*.cert
+
+# ──────────────────────────────────────────────
+# Node.js / Next.js
+# ──────────────────────────────────────────────
+node_modules/
+.next/
+out/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+*.tsbuildinfo
+next-env.d.ts
+
+# ──────────────────────────────────────────────
+# Terraform & Sandboxes
+# ──────────────────────────────────────────────
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.backup
+.terraform-plugin-cache/
+sandboxes/
+workspaces/
+
+# ──────────────────────────────────────────────
+# IDE / Logs / Agent Artifacts
+# ──────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+Thumbs.db
+.DS_Store
+*.log
+.gemini/
+.agents/
+brain/
+scratch/
+
+# ──────────────────────────────────────────────
+# Testing / Coverage
+# ──────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
