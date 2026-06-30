@@ -56,28 +56,23 @@ def _ensure_plugin_cache_dir() -> None:
 
 def _build_subprocess_env() -> dict[str, str]:
     """
-    Build a minimal, explicit environment dict for subprocess calls.
+    Build a sanitized environment dict for subprocess calls.
 
-    Why not just inherit the full parent environment?
-    - Principle of least privilege: the subprocess only needs PATH (to find
-      system tools), the plugin cache dir, and the automation flag.
-    - Prevents accidental leakage of secrets (GEMINI_API_KEY, DATABASE_URL)
-      into Terraform's process space.
+    Why inherit OS environment while scrubbing secrets?
+    - System tools, Node wrappers (GitHub Actions CI), SSH/SSL certs, and temp
+      directories require OS-specific variables across platforms.
+    - Security guarantee (§12.4): strictly scrub sensitive application secrets
+      (GEMINI_API_KEY, DATABASE_URL) before launching the Terraform process.
     """
-    env: dict[str, str] = {
-        "PATH": os.environ.get("PATH", ""),
-        "TF_PLUGIN_CACHE_DIR": str(Path(settings.TERRAFORM_PLUGIN_CACHE_DIR).resolve()),
-        "TF_IN_AUTOMATION": "1",
-    }
+    env = os.environ.copy()
 
-    # Include essential OS variables for Windows & Unix/Linux runners (GitHub Actions CI)
-    for var in (
-        "SYSTEMROOT", "TEMP", "TMP", "HOMEDRIVE", "HOMEPATH", "USERPROFILE",
-        "HOME", "TMPDIR", "SSL_CERT_FILE", "SSL_CERT_DIR", "XDG_CACHE_HOME",
-        "HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY", "http_proxy", "https_proxy", "no_proxy"
-    ):
-        if var in os.environ:
-            env[var] = os.environ[var]
+    # Scrub application secrets from subprocess environment
+    env.pop("GEMINI_API_KEY", None)
+    env.pop("DATABASE_URL", None)
+
+    # Inject Terraform automation controls
+    env["TF_PLUGIN_CACHE_DIR"] = str(Path(settings.TERRAFORM_PLUGIN_CACHE_DIR).resolve())
+    env["TF_IN_AUTOMATION"] = "1"
 
     return env
 
