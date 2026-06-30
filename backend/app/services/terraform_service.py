@@ -70,9 +70,12 @@ def _build_subprocess_env() -> dict[str, str]:
         "TF_IN_AUTOMATION": "1",
     }
 
-    # On Windows, some system variables are needed for subprocess to work
-    # correctly (temp dirs, system root, etc.)
-    for var in ("SYSTEMROOT", "TEMP", "TMP", "HOMEDRIVE", "HOMEPATH", "USERPROFILE"):
+    # Include essential OS variables for Windows & Unix/Linux runners (GitHub Actions CI)
+    for var in (
+        "SYSTEMROOT", "TEMP", "TMP", "HOMEDRIVE", "HOMEPATH", "USERPROFILE",
+        "HOME", "TMPDIR", "SSL_CERT_FILE", "SSL_CERT_DIR", "XDG_CACHE_HOME",
+        "HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY", "http_proxy", "https_proxy", "no_proxy"
+    ):
         if var in os.environ:
             env[var] = os.environ[var]
 
